@@ -1,0 +1,6 @@
+{
+  "name": "KSRTC Logistics Dashboard & Parcel Tracker",
+  "description": "KSRTC parcel booking, live shipment tracking, dispatch and station receiving workflow dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
