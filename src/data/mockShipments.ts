@@ -1,14 +1,14 @@
 import { Shipment, Station, DiscountCoupon } from '../types';
 
 export const INITIAL_STATIONS: Station[] = [
-  { id: 'st-tvm', name: 'Thiruvananthapuram Central (Trivandrum)', code: 'TVM-01', city: 'Thiruvananthapuram', district: 'Thiruvananthapuram', phone: '+91 471 2323835' },
-  { id: 'st-ekm', name: 'Ernakulam Central Hub (Kochi)', code: 'EKM-02', city: 'Kochi', district: 'Ernakulam', phone: '+91 484 2372033' },
-  { id: 'st-clt', name: 'Kozhikode Terminal (Calicut)', code: 'CLT-03', city: 'Kozhikode', district: 'Kozhikode', phone: '+91 495 2723796' },
-  { id: 'st-tsr', name: 'Thrissur Round Hub', code: 'TSR-04', city: 'Thrissur', district: 'Thrissur', phone: '+91 487 2421150' },
-  { id: 'st-pkd', name: 'Palakkad Main Depot', code: 'PKD-05', city: 'Palakkad', district: 'Palakkad', phone: '+91 491 2520098' },
-  { id: 'st-knr', name: 'Kannur Bus Station', code: 'KNR-06', city: 'Kannur', district: 'Kannur', phone: '+91 497 2707777' },
-  { id: 'st-blr', name: 'Bengaluru Shanthinagar Hub', code: 'BLR-07', city: 'Bengaluru', district: 'Bengaluru Urban', phone: '+91 80 22221321' },
-  { id: 'st-cbe', name: 'Coimbatore Gandhipuram Hub', code: 'CBE-08', city: 'Coimbatore', district: 'Coimbatore', phone: '+91 422 2521100' }
+  { id: 'st-tvm', name: 'Thiruvananthapuram Central (Trivandrum)', code: 'TVM-01', city: 'Thiruvananthapuram', district: 'Thiruvananthapuram', phone: '+91 471 2323835', coordinates: { lat: 8.4875, lng: 76.9525 } },
+  { id: 'st-ekm', name: 'Ernakulam Central Hub (Kochi)', code: 'EKM-02', city: 'Kochi', district: 'Ernakulam', phone: '+91 484 2372033', coordinates: { lat: 9.9816, lng: 76.2999 } },
+  { id: 'st-clt', name: 'Kozhikode Terminal (Calicut)', code: 'CLT-03', city: 'Kozhikode', district: 'Kozhikode', phone: '+91 495 2723796', coordinates: { lat: 11.2588, lng: 75.7804 } },
+  { id: 'st-tsr', name: 'Thrissur Round Hub', code: 'TSR-04', city: 'Thrissur', district: 'Thrissur', phone: '+91 487 2421150', coordinates: { lat: 10.5276, lng: 76.2144 } },
+  { id: 'st-pkd', name: 'Palakkad Main Depot', code: 'PKD-05', city: 'Palakkad', district: 'Palakkad', phone: '+91 491 2520098', coordinates: { lat: 10.7867, lng: 76.6548 } },
+  { id: 'st-knr', name: 'Kannur Bus Station', code: 'KNR-06', city: 'Kannur', district: 'Kannur', phone: '+91 497 2707777', coordinates: { lat: 11.8745, lng: 75.3704 } },
+  { id: 'st-blr', name: 'Bengaluru Shanthinagar Hub', code: 'BLR-07', city: 'Bengaluru', district: 'Bengaluru Urban', phone: '+91 80 22221321', coordinates: { lat: 12.9569, lng: 77.5956 } },
+  { id: 'st-cbe', name: 'Coimbatore Gandhipuram Hub', code: 'CBE-08', city: 'Coimbatore', district: 'Coimbatore', phone: '+91 422 2521100', coordinates: { lat: 11.0168, lng: 76.9558 } }
 ];
 
 export const INITIAL_COUPONS: DiscountCoupon[] = [
@@ -54,17 +54,17 @@ export const INITIAL_SHIPMENTS: Shipment[] = [
   {
     id: 'ship-001',
     trackingNumber: '#ABIKR8532489388361',
-    senderName: 'Ronald Richards',
-    senderPhone: '+1 213 555 0192',
-    senderCity: 'Los Angeles',
+    senderName: 'Harikrishnan Nair',
+    senderPhone: '+91 94471 88201',
+    senderCity: 'Thiruvananthapuram',
     senderStation: 'Thiruvananthapuram Central (Trivandrum)',
     receiverName: 'Sanjay Nair',
     receiverPhone: '+91 98471 22910',
-    receiverCity: 'Shanghai Hub / Ernakulam',
+    receiverCity: 'Kochi / Ernakulam',
     receiverStation: 'Ernakulam Central Hub (Kochi)',
-    pickupLocation: 'Besant Nile Logistics Terminal',
+    pickupLocation: 'Trivandrum Central KSRTC Cargo Terminal',
     deliveryLocation: 'Ernakulam City Gateway Hub',
-    currentLocation: 'SHANGHAI',
+    currentLocation: 'Alappuzha Bypass Hub',
     status: 'In Transit',
     progressPercent: 62,
     bookingDate: '28 July, 2025',
@@ -80,7 +80,7 @@ export const INITIAL_SHIPMENTS: Shipment[] = [
     conductorName: 'M. Suresh',
     conductorBadge: 'KSR-7842',
     conductorPhone: '+91 94470 18234',
-    deliveryPartnerName: 'Ronald Richards',
+    deliveryPartnerName: 'Aravind Mohan Nair',
     deliveryPartnerPhone: '+91 98950 44219',
     checkpoints: [
       {
@@ -104,7 +104,7 @@ export const INITIAL_SHIPMENTS: Shipment[] = [
       {
         id: 'cp-3',
         title: 'In Transit - Highway Checkpoint',
-        location: 'Shanghai Transit Corridor / Alappuzha Bypass',
+        location: 'NH 66 Transit Corridor / Alappuzha Bypass',
         timestamp: '29 July 2025, 02:45 PM',
         status: 'In Transit',
         completed: true,
@@ -133,17 +133,17 @@ export const INITIAL_SHIPMENTS: Shipment[] = [
   {
     id: 'ship-002',
     trackingNumber: '#BHTSR9453248933457',
-    senderName: 'Besant Logistics Corp',
-    senderPhone: '+1 603 555 0144',
-    senderCity: 'Besant Nile, New Hampshire',
+    senderName: 'Besant Kerala Agro Exports',
+    senderPhone: '+91 471 2341889',
+    senderCity: 'Thiruvananthapuram',
     senderStation: 'Thiruvananthapuram Central (Trivandrum)',
-    receiverName: 'Stockton Wholesale Traders',
-    receiverPhone: '+1 603 555 0199',
-    receiverCity: 'Stockton, New Hampshire',
+    receiverName: 'Devika Ramachandran',
+    receiverPhone: '+91 94472 88123',
+    receiverCity: 'Kochi Marine Drive',
     receiverStation: 'Ernakulam Central Hub (Kochi)',
-    pickupLocation: 'Besant Nile, New Hampshire',
-    deliveryLocation: 'Stockton, New Hampshire',
-    currentLocation: 'Stockton, New Hampshire',
+    pickupLocation: 'Trivandrum East Fort Logistics Bay',
+    deliveryLocation: 'Kochi Marine Drive Parcel Dock',
+    currentLocation: 'Cherthala KSRTC Depot',
     status: 'In Transit',
     progressPercent: 78,
     bookingDate: '30 July, 2025',
@@ -155,17 +155,17 @@ export const INITIAL_SHIPMENTS: Shipment[] = [
     serviceType: 'Express Cargo (Fastest Bus)',
     totalFreight: 360,
     busNumber: 'KL-15-A-3180 (Fast Passenger)',
-    busRouteName: 'Besant Corridor Interstate Line',
+    busRouteName: 'Trivandrum - Kochi High Speed Line',
     conductorName: 'K. V. Ramanan',
     conductorBadge: 'KSR-5519',
     conductorPhone: '+91 94472 90114',
-    deliveryPartnerName: 'Ronald Richards',
-    deliveryPartnerPhone: '+1 603 555 0188',
+    deliveryPartnerName: 'Suresh Kumar Pillai',
+    deliveryPartnerPhone: '+91 98950 44219',
     checkpoints: [
       {
         id: 'cp-201',
         title: 'Consignment Registered',
-        location: 'Besant Nile Hub',
+        location: 'Trivandrum East Fort Hub',
         timestamp: '30 July 2025, 07:45 AM',
         status: 'Booked',
         completed: true
@@ -173,24 +173,24 @@ export const INITIAL_SHIPMENTS: Shipment[] = [
       {
         id: 'cp-202',
         title: 'Manifested & Dispatched',
-        location: 'Interstate Freight Bay 7',
+        location: 'Intercity Freight Bay 7',
         timestamp: '30 July 2025, 10:20 AM',
         status: 'Dispatched',
         completed: true
       },
       {
         id: 'cp-203',
-        title: 'In Transit to Stockton Station',
-        location: 'Stockton Highway Corridor',
+        title: 'In Transit to Kochi Terminal',
+        location: 'Cherthala Highway Corridor',
         timestamp: '30 July 2025, 01:10 PM',
         status: 'In Transit',
         completed: true,
-        notes: 'Delivery Partner assigned: Ronald Richards.'
+        notes: 'Delivery Partner assigned: Suresh Kumar Pillai.'
       },
       {
         id: 'cp-204',
-        title: 'Arrival at Stockton Receiving Dock',
-        location: 'Stockton, New Hampshire Terminal',
+        title: 'Arrival at Kochi Receiving Dock',
+        location: 'Ernakulam Hub Dock 3',
         timestamp: 'Pending Arrival',
         status: 'Arrived',
         completed: false

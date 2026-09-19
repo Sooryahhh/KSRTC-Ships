@@ -172,32 +172,34 @@ export const HistoryView: React.FC = () => {
               </div>
 
               {/* Right Column: Amount & Actions */}
-              <div className="flex items-center gap-3 self-end lg:self-center">
-                <div className="text-right pr-2">
-                  <div className="text-xs text-slate-400 font-semibold uppercase">Freight</div>
-                  <div className="text-base font-black text-slate-800">₹{s.totalFreight}</div>
+              <div className="w-full lg:w-auto flex items-center justify-between lg:justify-end gap-3 pt-3 lg:pt-0 border-t lg:border-t-0 border-slate-100">
+                <div className="text-left lg:text-right pr-2">
+                  <div className="text-[10px] text-slate-400 font-bold uppercase">Freight</div>
+                  <div className="text-sm sm:text-base font-black text-slate-800">₹{s.totalFreight}</div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setActiveWaybillShipment(s)}
-                  className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
-                  title="Print Waybill Receipt"
-                >
-                  <Printer className="w-4 h-4" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setActiveWaybillShipment(s)}
+                    className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors"
+                    title="Print Waybill Receipt"
+                  >
+                    <Printer className="w-4 h-4" />
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveShipment(s);
-                    setActiveTab('Track');
-                  }}
-                  className="flex items-center gap-1 px-4 py-2.5 rounded-xl bg-[#0066ff] hover:bg-[#0052cc] text-white text-xs font-bold shadow-xs transition-colors"
-                >
-                  <span>Track Live</span>
-                  <ArrowUpRight className="w-4 h-4" />
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveShipment(s);
+                      setActiveTab('Track');
+                    }}
+                    className="flex items-center gap-1 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-[#0066ff] active:bg-[#0052cc] text-white text-xs font-bold shadow-xs transition-colors"
+                  >
+                    <span>Track Live</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
             </div>
           ))

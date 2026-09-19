@@ -12,7 +12,8 @@ import {
   Sparkles,
   ArrowRight,
   Bus,
-  AlertCircle
+  AlertCircle,
+  Clock
 } from 'lucide-react';
 import { useShipment } from '../context/ShipmentContext';
 import { ParcelCategory, ServiceType } from '../types';
@@ -25,12 +26,14 @@ export const BookParcelView: React.FC = () => {
     setAppliedCoupon,
     bookShipment,
     setActiveTab,
-    setActiveWaybillShipment
+    setActiveWaybillShipment,
+    userProfile,
+    calculateEstimatedDelivery
   } = useShipment();
 
-  // Form states
-  const [senderName, setSenderName] = useState('Ronald Richards');
-  const [senderPhone, setSenderPhone] = useState('+91 94471 88201');
+  // Form states initialized with userProfile (Malayali Hindu name)
+  const [senderName, setSenderName] = useState(userProfile.name);
+  const [senderPhone, setSenderPhone] = useState(userProfile.phone);
   const [senderCity, setSenderCity] = useState('Thiruvananthapuram');
   const [senderStation, setSenderStation] = useState(stations[0].name);
 
@@ -46,9 +49,13 @@ export const BookParcelView: React.FC = () => {
   const [notes, setNotes] = useState('');
   const [couponInput, setCouponInput] = useState('');
   const [couponMsg, setCouponMsg] = useState<{ text: string; success: boolean } | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successBooking, setSuccessBooking] = useState<any | null>(null);
+
+  // Real-time Transit Delivery Estimation based on station distance and transit speeds
+  const liveTransitEstimate = calculateEstimatedDelivery(senderStation, receiverStation, serviceType);
 
   // Price math
   const ratePerKg = serviceType.includes('Express') ? 60 : 35;
@@ -88,9 +95,10 @@ export const BookParcelView: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!receiverName.trim() || !receiverPhone.trim()) {
-      alert('Please fill in the Receiver Name and Phone number.');
+      setFormError('Please enter Receiver Name and Phone number to issue the consignment.');
       return;
     }
+    setFormError(null);
 
     setIsSubmitting(true);
     setTimeout(() => {
@@ -460,6 +468,42 @@ export const BookParcelView: React.FC = () => {
 
         {/* Right Tariff Calculator & Confirmation (4 cols) */}
         <div className="lg:col-span-4 space-y-4">
+          {/* Dynamic Transit Speed & ETA Card */}
+          <div className="liquid-glass rounded-3xl p-5 border border-sky-100/80 shadow-md">
+            <div className="flex items-center justify-between pb-2.5 border-b border-sky-100/70">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-xs">
+                  <Clock className="w-3.5 h-3.5" />
+                </div>
+                <span className="text-xs font-bold text-slate-800">Dynamic Transit Estimation</span>
+              </div>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                Live Route
+              </span>
+            </div>
+
+            <div className="pt-3 space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-500">Distance Between Hubs:</span>
+                <span className="font-bold text-slate-800">{liveTransitEstimate.distanceKm} km</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-500">Corridor Route:</span>
+                <span className="font-bold text-blue-700 truncate max-w-[170px]" title={liveTransitEstimate.corridorDescription}>
+                  {liveTransitEstimate.corridorDescription}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-500">Estimated Bus Transit:</span>
+                <span className="font-bold text-slate-800">{liveTransitEstimate.formattedDuration}</span>
+              </div>
+              <div className="mt-2 pt-2 border-t border-sky-100 flex items-center justify-between bg-blue-50/70 p-2.5 rounded-xl">
+                <span className="text-[11px] font-bold text-blue-900">Guaranteed Arrival:</span>
+                <span className="text-xs font-black text-blue-700">{liveTransitEstimate.estimatedDeliveryDate}</span>
+              </div>
+            </div>
+          </div>
+
           <div className="bg-white rounded-3xl p-6 shadow-sm border border-sky-100 sticky top-4">
             <h3 className="text-base font-bold text-slate-800 pb-3 border-b border-slate-100 flex items-center justify-between">
               <span>Waybill Freight Calculation</span>
@@ -529,8 +573,16 @@ export const BookParcelView: React.FC = () => {
               )}
             </div>
 
+            {/* Validation Error Alert */}
+            {formError && (
+              <div className="mb-3 p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-bold flex items-center gap-2 animate-in fade-in slide-in-from-top-1">
+                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                <span>{formError}</span>
+              </div>
+            )}
+
             {/* Final Booking Button */}
-            <div className="pt-2">
+            <div className="pt-1">
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -541,7 +593,7 @@ export const BookParcelView: React.FC = () => {
                 ) : (
                   <>
                     <Send className="w-4 h-4" />
-                    <span>Issue Waybill & Confirm Booking</span>
+                    <span>Issue Waybill & Confirm Booking (₹{finalTotal})</span>
                   </>
                 )}
               </button>

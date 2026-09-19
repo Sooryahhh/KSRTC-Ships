@@ -41,7 +41,7 @@ export const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-48 lg:w-52 flex flex-col justify-between shrink-0 pr-4 select-none">
+    <aside className="hidden md:flex w-48 lg:w-52 flex-col justify-between shrink-0 pr-4 select-none">
       {/* Primary Navigation Rail */}
       <nav className="space-y-2">
         {navItems.map((item) => {

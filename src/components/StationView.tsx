@@ -30,6 +30,7 @@ export const StationView: React.FC = () => {
   } = useShipment();
 
   const [lookupQuery, setLookupQuery] = useState('');
+  const [lookupError, setLookupError] = useState<string | null>(null);
   const [filterType, setFilterType] = useState<'All' | 'Inward' | 'Outward'>('All');
   const [operatorNotes, setOperatorNotes] = useState('');
   const [selectedShipment, setSelectedShipment] = useState<Shipment | null>(null);
@@ -61,8 +62,10 @@ export const StationView: React.FC = () => {
     if (found) {
       setSelectedShipment(found);
       setLookupQuery('');
+      setLookupError(null);
     } else {
-      alert(`Consignment "${lookupQuery}" not found in depot manifest.`);
+      setLookupError(`Consignment "${lookupQuery}" not found in depot manifest.`);
+      setTimeout(() => setLookupError(null), 4000);
     }
   };
 
@@ -134,9 +137,12 @@ export const StationView: React.FC = () => {
               <input
                 type="text"
                 value={lookupQuery}
-                onChange={(e) => setLookupQuery(e.target.value)}
-                placeholder="Enter Reference (e.g. KSR-48213, #ABIKR...)"
-                className="w-full pl-11 pr-28 py-3 bg-slate-50 text-xs font-bold rounded-2xl border border-slate-200 focus:outline-none focus:border-blue-500 uppercase"
+                onChange={(e) => {
+                  setLookupQuery(e.target.value);
+                  if (lookupError) setLookupError(null);
+                }}
+                placeholder="Enter Reference (e.g. KSR-48213)"
+                className="w-full pl-11 pr-24 py-3 bg-slate-50 text-xs font-bold rounded-2xl border border-slate-200 focus:outline-none focus:border-blue-500 uppercase"
               />
               <button
                 type="submit"
@@ -145,6 +151,35 @@ export const StationView: React.FC = () => {
                 Inspect
               </button>
             </form>
+
+            {lookupError && (
+              <div className="mt-2.5 p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold flex items-center gap-2 animate-in fade-in">
+                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                <span>{lookupError}</span>
+              </div>
+            )}
+
+            {/* Quick barcode simulation chips for quick mobile tap */}
+            <div className="mt-3 flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px]">
+              <span className="text-slate-400 font-bold shrink-0">Depot Parcels:</span>
+              {shipments.slice(0, 4).map((s) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => {
+                    setSelectedShipment(s);
+                    setLookupError(null);
+                  }}
+                  className={`px-2.5 py-1 rounded-full font-bold shrink-0 transition-colors ${
+                    activeFocusShipment?.id === s.id
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-sky-50 text-blue-700 hover:bg-sky-100 border border-sky-100'
+                  }`}
+                >
+                  {s.trackingNumber}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Active Consignment Action Console */}

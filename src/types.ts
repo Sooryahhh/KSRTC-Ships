@@ -61,6 +61,21 @@ export interface Station {
   city: string;
   district: string;
   phone: string;
+  coordinates?: {
+    lat: number;
+    lng: number;
+  };
+}
+
+export interface TransitEstimate {
+  distanceKm: number;
+  estimatedTransitHours: number;
+  formattedDuration: string;
+  estimatedDeliveryDate: string;
+  etaMinutes: number;
+  historicalAverageSpeedKmh: number;
+  corridorDescription: string;
+  bufferHandlingMinutes: number;
 }
 
 export interface StationLog {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Bell, ChevronDown, Bus, CheckCircle2, Truck } from 'lucide-react';
+import { Search, Bell, ChevronDown, Bus, CheckCircle2, Truck, Menu } from 'lucide-react';
 import { useShipment } from '../context/ShipmentContext';
 
 export const TopNav: React.FC = () => {
@@ -12,12 +12,16 @@ export const TopNav: React.FC = () => {
     notificationCount,
     resetNotifications,
     stationLogs,
-    shipments
+    shipments,
+    userProfile,
+    isMobileMenuOpen,
+    setIsMobileMenuOpen
   } = useShipment();
 
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,6 +31,7 @@ export const TopNav: React.FC = () => {
       setActiveShipment(found);
     }
     setActiveTab('Track');
+    setShowMobileSearch(false);
   };
 
   const filteredSuggestions = trackQuery.trim()
@@ -39,27 +44,42 @@ export const TopNav: React.FC = () => {
     : shipments.slice(0, 3);
 
   return (
-    <header className="relative z-30 flex items-center justify-between pb-6 pt-1">
-      {/* Brand Logo */}
-      <div 
-        onClick={() => setActiveTab('Home')}
-        className="flex items-center gap-3 cursor-pointer select-none group"
-      >
-        <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#1060cf] to-[#004bb5] text-white flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
-          <Bus className="w-6 h-6 stroke-[2.2]" />
-        </div>
-        <div className="flex flex-col">
-          <span className="text-2xl font-black tracking-tight text-[#0f3b82] font-sans">
-            KSRTC
-          </span>
-          <span className="text-[10px] uppercase font-bold tracking-widest text-blue-600/80 -mt-1">
-            Parcel Logistics
-          </span>
+    <header className="relative z-30 flex items-center justify-between pb-4 sm:pb-6 pt-1 gap-2 sm:gap-4">
+      {/* Brand Logo & Mobile Menu Button */}
+      <div className="flex items-center gap-2 sm:gap-3">
+        {/* Mobile Menu Button (Hamburger) with Liquid Glass styling */}
+        <button
+          type="button"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="md:hidden relative flex items-center justify-center w-10 h-10 rounded-2xl liquid-glass text-[#0f3b82] hover:text-blue-700 active:scale-95 transition-all shadow-sm border border-white/80"
+          aria-label="Open Navigation Menu"
+        >
+          <Menu className="w-5 h-5 stroke-[2.4]" />
+          {notificationCount > 0 && (
+            <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-rose-500 animate-pulse ring-2 ring-white" />
+          )}
+        </button>
+
+        <div 
+          onClick={() => setActiveTab('Home')}
+          className="flex items-center gap-2.5 cursor-pointer select-none group"
+        >
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br from-[#1060cf] to-[#004bb5] text-white flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
+            <Bus className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.2]" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-xl sm:text-2xl font-black tracking-tight text-[#0f3b82] font-sans leading-tight">
+              KSRTC
+            </span>
+            <span className="text-[9px] sm:text-[10px] uppercase font-bold tracking-widest text-blue-600/80 -mt-0.5">
+              Parcel Logistics
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Centered Global Search Bar */}
-      <div className="relative flex-1 max-w-xl mx-6">
+      {/* Global Search Bar - Responsive */}
+      <div className="relative flex-1 max-w-xl mx-2 sm:mx-6 hidden md:block">
         <form onSubmit={handleSearchSubmit} className="relative">
           <div className="relative flex items-center">
             <Search className="absolute left-4 w-5 h-5 text-blue-400 pointer-events-none" />
@@ -70,7 +90,7 @@ export const TopNav: React.FC = () => {
               onFocus={() => setIsSearchFocused(true)}
               onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
               placeholder="Search Tracking, Shipment, or AWB No."
-              className="w-full pl-12 pr-10 py-3 bg-white/95 hover:bg-white text-sm font-medium text-slate-800 placeholder-slate-400 rounded-full border border-sky-100 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 shadow-sm transition-all"
+              className="w-full pl-12 pr-10 py-2.5 sm:py-3 bg-white/95 hover:bg-white text-sm font-medium text-slate-800 placeholder-slate-400 rounded-full border border-sky-100 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 shadow-sm transition-all"
             />
             {trackQuery && (
               <button
@@ -129,8 +149,18 @@ export const TopNav: React.FC = () => {
         )}
       </div>
 
-      {/* Right Controls: Notifications & User Profile */}
-      <div className="flex items-center gap-4">
+      {/* Right Controls: Mobile Search Trigger, Notifications & User Profile */}
+      <div className="flex items-center gap-2 sm:gap-4">
+        {/* Mobile Search Icon Trigger */}
+        <button
+          type="button"
+          onClick={() => setShowMobileSearch(!showMobileSearch)}
+          className="md:hidden w-10 h-10 rounded-full bg-white flex items-center justify-center border border-sky-100 shadow-sm text-slate-600 hover:text-blue-600 transition-colors"
+          title="Search Tracking"
+        >
+          <Search className="w-4 h-4 text-blue-600" />
+        </button>
+
         {/* Notification Bell */}
         <div className="relative">
           <button
@@ -144,13 +174,13 @@ export const TopNav: React.FC = () => {
           >
             <Bell className="w-5 h-5 text-blue-600" />
             {notificationCount > 0 && (
-              <span className="absolute 1 top-1.5 right-1.5 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-white animate-pulse" />
+              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-white animate-pulse" />
             )}
           </button>
 
           {/* Notifications Panel */}
           {showNotifications && (
-            <div className="absolute right-0 top-12 w-80 bg-white rounded-2xl shadow-xl border border-sky-100 p-3 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+            <div className="absolute right-0 top-12 w-72 sm:w-80 bg-white rounded-2xl shadow-xl border border-sky-100 p-3 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
               <div className="flex items-center justify-between pb-2 border-b border-slate-100 px-2">
                 <span className="text-sm font-bold text-slate-800">Operational Alerts</span>
                 <span className="text-[11px] text-blue-600 font-medium cursor-pointer" onClick={() => setShowNotifications(false)}>Close</span>
@@ -171,33 +201,38 @@ export const TopNav: React.FC = () => {
           )}
         </div>
 
-        {/* User Profile Card as shown in screenshot */}
+        {/* User Profile Card with Malayali Hindu Name */}
         <div className="relative">
           <button
             type="button"
             onClick={() => setShowUserMenu(!showUserMenu)}
-            className="flex items-center gap-3 pl-1 pr-3 py-1 bg-white hover:bg-sky-50 rounded-full border border-sky-100 shadow-sm transition-all"
+            className="flex items-center gap-2 sm:gap-3 pl-1 pr-2 sm:pr-3 py-1 bg-white hover:bg-sky-50 rounded-full border border-sky-100 shadow-sm transition-all"
           >
-            <div className="w-9 h-9 rounded-full overflow-hidden ring-2 ring-blue-500/20 bg-slate-200">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full overflow-hidden ring-2 ring-blue-500/20 bg-slate-200">
               <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=160&q=80"
-                alt="Ronald Richards"
+                src={userProfile.avatarUrl}
+                alt={userProfile.name}
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
               />
             </div>
-            <span className="text-sm font-bold text-slate-800 hidden sm:inline">
-              Ronald Richards
+            <span className="text-xs sm:text-sm font-bold text-slate-800 hidden sm:inline truncate max-w-[130px]">
+              {userProfile.name}
             </span>
-            <ChevronDown className="w-4 h-4 text-slate-400" />
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
           </button>
 
           {showUserMenu && (
-            <div className="absolute right-0 top-12 w-56 bg-white rounded-2xl shadow-xl border border-sky-100 p-2 z-50 text-xs">
+            <div className="absolute right-0 top-12 w-64 bg-white rounded-2xl shadow-xl border border-sky-100 p-2 z-50 text-xs">
               <div className="px-3 py-2 border-b border-slate-100">
-                <div className="font-bold text-slate-800">Ronald Richards</div>
-                <div className="text-slate-400 text-[11px]">ronald.richards@ksrtc.in</div>
-                <div className="text-blue-600 font-semibold text-[11px] mt-0.5">Verified Depot Partner</div>
+                <div className="font-bold text-slate-800 text-sm">{userProfile.name}</div>
+                <div className="text-slate-400 text-[11px]">{userProfile.email}</div>
+                <div className="text-blue-600 font-semibold text-[11px] mt-0.5">
+                  {userProfile.role}
+                </div>
+                <div className="text-slate-500 text-[10px] mt-0.5">
+                  Depot: {userProfile.depot}
+                </div>
               </div>
               <button
                 type="button"
@@ -207,7 +242,7 @@ export const TopNav: React.FC = () => {
                 }}
                 className="w-full text-left px-3 py-2 rounded-lg hover:bg-sky-50 text-slate-700 font-medium"
               >
-                My Bookings & History
+                My Consignment Bookings
               </button>
               <button
                 type="button"
@@ -217,12 +252,66 @@ export const TopNav: React.FC = () => {
                 }}
                 className="w-full text-left px-3 py-2 rounded-lg hover:bg-sky-50 text-slate-700 font-medium"
               >
-                Station Staff Inward Bay
+                Station Staff Inward Bay (SC-02)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab('Shipments');
+                  setShowUserMenu(false);
+                }}
+                className="w-full text-left px-3 py-2 rounded-lg hover:bg-sky-50 text-slate-700 font-medium"
+              >
+                Book New Bus Parcel
               </button>
             </div>
           )}
         </div>
       </div>
+
+      {/* Mobile Search Expandable Bar */}
+      {showMobileSearch && (
+        <div className="absolute top-full left-0 right-0 mt-1 md:hidden bg-white p-3 rounded-2xl shadow-2xl border border-sky-100 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+          <form onSubmit={handleSearchSubmit} className="relative flex items-center">
+            <Search className="absolute left-3 w-4 h-4 text-blue-500 pointer-events-none" />
+            <input
+              type="text"
+              value={trackQuery}
+              onChange={(e) => setTrackQuery(e.target.value)}
+              placeholder="Ref No. (e.g. KSR-48213)"
+              className="w-full pl-9 pr-16 py-2.5 bg-slate-50 text-xs font-semibold rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              autoFocus
+            />
+            <button
+              type="submit"
+              className="absolute right-1 px-3 py-1.5 bg-blue-600 active:bg-blue-700 text-white rounded-lg text-xs font-bold shadow-xs"
+            >
+              Track
+            </button>
+          </form>
+
+          {/* Quick Tap Pills on Mobile */}
+          <div className="mt-2.5 flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px]">
+            <span className="text-slate-400 font-bold shrink-0">Quick:</span>
+            {shipments.slice(0, 3).map((s) => (
+              <button
+                key={s.id}
+                type="button"
+                onClick={() => {
+                  setTrackQuery(s.trackingNumber);
+                  setActiveShipment(s);
+                  setActiveTab('Track');
+                  setShowMobileSearch(false);
+                }}
+                className="px-2.5 py-1 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold shrink-0 border border-blue-100 transition-colors"
+              >
+                {s.trackingNumber}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </header>
   );
 };
+

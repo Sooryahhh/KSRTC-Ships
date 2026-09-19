@@ -12,11 +12,13 @@ import {
   Clock,
   ExternalLink,
   ShieldCheck,
-  Building2
+  Building2,
+  Package,
+  Percent
 } from 'lucide-react';
 import { useShipment } from '../context/ShipmentContext';
 import { InteractiveMap } from './InteractiveMap';
-import ksrtcBusHeroImg from '../assets/images/ksrtc_bus_hero_1789639274972.jpg';
+import { PictureSlideshow } from './PictureSlideshow';
 import parcelBoxImg from '../assets/images/parcel_box_3d_1789639288534.jpg';
 
 export const HomeDashboard: React.FC = () => {
@@ -27,7 +29,9 @@ export const HomeDashboard: React.FC = () => {
     setActiveTab,
     setIsCallModalOpen,
     setCallPartnerShipment,
-    setIsSupportModalOpen
+    setIsSupportModalOpen,
+    userProfile,
+    calculateEstimatedDelivery
   } = useShipment();
 
   const [innerSearchQuery, setInnerSearchQuery] = useState('');
@@ -48,75 +52,54 @@ export const HomeDashboard: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
+      {/* Mobile Quick Action Ribbon (Visible on Mobile only) */}
+      <div className="md:hidden flex items-center gap-2 overflow-x-auto pb-1 -mt-1 select-none no-scrollbar">
+        <button
+          type="button"
+          onClick={() => setActiveTab('Shipments')}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-blue-600 active:bg-blue-700 text-white font-bold text-xs shrink-0 shadow-sm shadow-blue-600/25 transition-transform active:scale-95"
+        >
+          <Package className="w-3.5 h-3.5" />
+          <span>Book Parcel</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('Track')}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-white active:bg-sky-50 text-slate-700 font-bold text-xs shrink-0 border border-sky-100 shadow-xs transition-transform active:scale-95"
+        >
+          <MapPin className="w-3.5 h-3.5 text-blue-600" />
+          <span>Live GPS</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('Station View')}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-white active:bg-sky-50 text-slate-700 font-bold text-xs shrink-0 border border-sky-100 shadow-xs transition-transform active:scale-95"
+        >
+          <Building2 className="w-3.5 h-3.5 text-blue-600" />
+          <span>Depot Bay</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab('Discount')}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-white active:bg-sky-50 text-slate-700 font-bold text-xs shrink-0 border border-sky-100 shadow-xs transition-transform active:scale-95"
+        >
+          <Percent className="w-3.5 h-3.5 text-emerald-600" />
+          <span>Offers</span>
+        </button>
+      </div>
+
       {/* 3-Column Main Workspace Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5 items-start">
         
         {/* =========================================================================
-            COLUMN 1: Hero / Promotional Card (Left, spanning 4 cols on lg screens)
+            COLUMN 1: Dynamic Picture Slideshow Carousel (Left, spanning 4 cols on lg)
            ========================================================================= */}
-        <div className="lg:col-span-4 flex flex-col h-full rounded-[26px] overflow-hidden bg-gradient-to-b from-[#1875eb] to-[#0d59c2] text-white shadow-xl shadow-blue-900/10 border border-blue-400/20 relative group">
-          {/* Real KSRTC Bus Photograph */}
-          <div className="relative h-56 sm:h-64 w-full overflow-hidden bg-slate-900">
-            <img
-              src={ksrtcBusHeroImg}
-              alt="KSRTC Express Logistics Bus"
-              className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
-              referrerPolicy="no-referrer"
-            />
-            {/* Gradient blend overlay into blue card */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#1875eb] via-transparent to-black/30" />
-
-            {/* Badge overlay on top image */}
-            <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/20 text-[11px] font-bold text-white flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              Depot Fleet Connected
-            </div>
-          </div>
-
-          {/* Content area below image */}
-          <div className="p-6 flex-1 flex flex-col justify-between">
-            <div>
-              {/* Carousel Indicators as in screenshot */}
-              <div className="flex items-center gap-2 mb-4">
-                <span className="w-8 h-1.5 rounded-full bg-white transition-all" />
-                <span className="w-2 h-1.5 rounded-full bg-white/40" />
-                <span className="w-2 h-1.5 rounded-full bg-white/40" />
-                <span className="w-2 h-1.5 rounded-full bg-white/40" />
-              </div>
-
-              {/* Large Headline */}
-              <h2 className="text-2xl sm:text-[26px] font-black leading-tight tracking-tight text-white mb-3">
-                Effortless Shipping,
-                <br />
-                Smarter Business
-              </h2>
-
-              {/* Supporting Description */}
-              <p className="text-sm text-sky-100/90 leading-relaxed font-normal">
-                Ship faster and smarter with effortless logistics. We simplify every move from pickup to delivery across Kerala & interstate corridors.
-              </p>
-            </div>
-
-            {/* Large Rounded Get Started CTA Button as in screenshot */}
-            <div className="mt-8">
-              <button
-                type="button"
-                onClick={() => setActiveTab('Shipments')}
-                className="w-full py-3.5 px-4 bg-white hover:bg-sky-50 active:scale-[0.99] text-[#0052cc] rounded-full font-extrabold text-sm shadow-lg shadow-blue-950/20 flex items-center justify-between transition-all duration-200"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-[#0052cc] text-white flex items-center justify-center shadow-xs">
-                    <Truck className="w-4 h-4" />
-                  </div>
-                  <span className="tracking-wide">Get Started</span>
-                </div>
-                <div className="text-blue-600 font-bold tracking-tighter text-base pr-1">
-                  &gt;&gt;&gt;
-                </div>
-              </button>
-            </div>
-          </div>
+        <div className="lg:col-span-4 flex flex-col h-full">
+          <PictureSlideshow intervalMs={4500} className="w-full h-full" />
         </div>
 
         {/* =========================================================================
@@ -131,19 +114,19 @@ export const HomeDashboard: React.FC = () => {
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-white/60 bg-white/20">
                   <img
-                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=160&q=80"
-                    alt="Ronald Richards"
+                    src={userProfile.avatarUrl}
+                    alt={userProfile.name}
                     className="w-full h-full object-cover"
                     referrerPolicy="no-referrer"
                   />
                 </div>
                 <div>
                   <div className="font-bold text-sm text-white leading-tight">
-                    Ronald Richards
+                    {userProfile.name}
                   </div>
                   <div className="flex items-center gap-1 text-xs text-sky-100 font-medium">
                     <MapPin className="w-3 h-3 text-sky-200" />
-                    <span>{activeShipment.senderCity || 'Los Angeles'}</span>
+                    <span>{activeShipment.senderCity || 'Kochi'}</span>
                   </div>
                 </div>
               </div>
@@ -334,9 +317,20 @@ export const HomeDashboard: React.FC = () => {
            ========================================================================= */}
         <div className="lg:col-span-4 flex flex-col gap-4">
           
-          {/* Card 1: Interactive Map */}
-          <div className="rounded-[26px] bg-white p-3 shadow-md shadow-blue-900/5 border border-sky-100">
-            <InteractiveMap shipment={activeShipment} />
+          {/* Card 1: Realistic Interactive Map */}
+          <div className="rounded-[26px] bg-white p-3.5 shadow-md shadow-blue-900/5 border border-sky-100">
+            <div className="flex items-center justify-between mb-2 px-1">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
+                <h3 className="text-xs font-black uppercase tracking-wider text-slate-700">
+                  Live Fleet Radar & Route
+                </h3>
+              </div>
+              <span className="text-[11px] font-bold text-blue-600">
+                {activeShipment.trackingNumber}
+              </span>
+            </div>
+            <InteractiveMap shipment={activeShipment} heightClassName="h-[240px]" />
           </div>
 
           {/* Card 2: Delivery Partner Card */}
@@ -347,7 +341,7 @@ export const HomeDashboard: React.FC = () => {
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-blue-100 bg-slate-100">
                     <img
-                      src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=160&q=80"
+                      src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=160&q=80"
                       alt="Delivery Partner"
                       className="w-full h-full object-cover"
                       referrerPolicy="no-referrer"
@@ -355,10 +349,10 @@ export const HomeDashboard: React.FC = () => {
                   </div>
                   <div>
                     <div className="font-bold text-sm text-slate-800 leading-tight">
-                      {activeShipment.deliveryPartnerName || 'Ronald Richards'}
+                      {activeShipment.deliveryPartnerName || 'Pradeep Kumar Panicker'}
                     </div>
                     <div className="text-xs text-slate-400 font-semibold">
-                      Delivery Partner
+                      KSRTC Swift Express Pilot
                     </div>
                   </div>
                 </div>

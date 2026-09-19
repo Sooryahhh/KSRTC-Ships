@@ -1,8 +1,18 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Shipment, ShipmentStatus, Station, StationLog, DiscountCoupon } from '../types';
+import { Shipment, ShipmentStatus, Station, StationLog, DiscountCoupon, TransitEstimate } from '../types';
 import { INITIAL_SHIPMENTS, INITIAL_STATIONS, INITIAL_COUPONS } from '../data/mockShipments';
+import { calculateEstimatedDeliveryTime, calculateStationDistance } from '../utils/transitCalculator';
 
 export type ActiveTab = 'Home' | 'Track' | 'Shipments' | 'History' | 'Station View' | 'Discount';
+
+export interface UserProfile {
+  name: string;
+  role: string;
+  depot: string;
+  email: string;
+  phone: string;
+  avatarUrl: string;
+}
 
 interface BookingData {
   senderName: string;
@@ -44,6 +54,18 @@ interface ShipmentContextType {
     stationName?: string,
     operatorNotes?: string
   ) => void;
+  // Estimated Delivery Time Logic Handler
+  calculateEstimatedDelivery: (
+    sourceStation: string,
+    destStation: string,
+    serviceType?: Shipment['serviceType']
+  ) => TransitEstimate;
+  // User Profile
+  userProfile: UserProfile;
+  setUserProfile: React.Dispatch<React.SetStateAction<UserProfile>>;
+  // Mobile Nav Drawer (Liquid Glass)
+  isMobileMenuOpen: boolean;
+  setIsMobileMenuOpen: (open: boolean) => void;
   // Modals
   activeWaybillShipment: Shipment | null;
   setActiveWaybillShipment: (shipment: Shipment | null) => void;
@@ -82,6 +104,31 @@ export const ShipmentProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [appliedCoupon, setAppliedCoupon] = useState<DiscountCoupon | null>(null);
   const [activeStationId, setActiveStationId] = useState<string>(INITIAL_STATIONS[1].id); // Ernakulam Hub
   const [notificationCount, setNotificationCount] = useState<number>(3);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+
+  // User Profile: Default Malayali Hindu Name
+  const [userProfile, setUserProfile] = useState<UserProfile>({
+    name: 'Harikrishnan Nair',
+    role: 'Senior Station Consignor & Depot Officer',
+    depot: 'Ernakulam Central Hub (Kochi)',
+    email: 'harikrishnan.nair@ksrtc.kerala.gov.in',
+    phone: '+91 94471 88201',
+    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80'
+  });
+
+  // Estimated delivery time logic handler based on station distance and historical transit speeds
+  const calculateEstimatedDelivery = (
+    sourceStation: string,
+    destStation: string,
+    serviceType?: Shipment['serviceType']
+  ): TransitEstimate => {
+    return calculateEstimatedDeliveryTime(
+      sourceStation,
+      destStation,
+      serviceType || 'Express Cargo (Fastest Bus)',
+      INITIAL_STATIONS
+    );
+  };
 
   // Modals state
   const [activeWaybillShipment, setActiveWaybillShipment] = useState<Shipment | null>(null);
@@ -180,11 +227,12 @@ export const ShipmentProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       year: 'numeric'
     });
 
-    const estDate = new Date(now.getTime() + 24 * 60 * 60 * 1000).toLocaleDateString('en-GB', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    });
+    // Dynamic ETA calculation based on station distance & historical transit times
+    const transitEstimate = calculateEstimatedDelivery(
+      data.senderStation,
+      data.receiverStation,
+      data.serviceType
+    );
 
     const newShipment: Shipment = {
       id: `ship-${Date.now()}`,
@@ -203,8 +251,8 @@ export const ShipmentProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       status: 'Booked',
       progressPercent: 15,
       bookingDate: formattedDate,
-      estimatedDelivery: `${estDate}, 06:00 PM`,
-      etaMinutes: 180,
+      estimatedDelivery: transitEstimate.estimatedDeliveryDate,
+      etaMinutes: transitEstimate.etaMinutes,
       weightKg: data.weightKg,
       category: data.category,
       declaredValue: data.declaredValue,
@@ -218,7 +266,7 @@ export const ShipmentProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           timestamp: `${formattedDate}, ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
           status: 'Booked',
           completed: true,
-          notes: 'Parcel accepted at booking bay. Security seal attached.'
+          notes: `Parcel accepted at booking bay. Estimated transit: ${transitEstimate.formattedDuration} via ${transitEstimate.corridorDescription}.`
         },
         {
           id: `cp-${Date.now()}-2`,
@@ -399,7 +447,12 @@ export const ShipmentProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         callPartnerShipment,
         setCallPartnerShipment,
         notificationCount,
-        resetNotifications
+        resetNotifications,
+        calculateEstimatedDelivery,
+        userProfile,
+        setUserProfile,
+        isMobileMenuOpen,
+        setIsMobileMenuOpen
       }}
     >
       {children}
